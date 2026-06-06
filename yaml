@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      CI: true
+      NPM_CONFIG_YES: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies (locked, non-interactive)
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify webpack-cli exists
+        run: npx webpack-cli --version
+
+      - name: Build (non-interactive)
+        run: npx webpack --mode production --no-color --no-progress
